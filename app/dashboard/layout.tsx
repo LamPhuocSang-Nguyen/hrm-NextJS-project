@@ -3,33 +3,30 @@
 import { useState } from "react";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import {
-  SidebarInset,
   SidebarProvider,
+  SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HomeContent } from "@/components/ui/dashboard/home-content";
 import { InboxContent } from "@/components/ui/dashboard/inbox-content";
+import { SectionCards } from "@/components/ui/section-card";
 
 const queryClient = new QueryClient();
 
-type MenuKey = "home" | "inbox" | "calendar" | "search" | "settings";
+type MenuKey = "card" | "home" | "inbox" | "calendar" | "search" | "settings";
 
 export default function DashboardLayout() {
-  const [activeMenu, setActiveMenu] = useState<MenuKey>("home");
+  const [activeMenu, setActiveMenu] = useState<MenuKey>("card");
 
   const renderContent = () => {
     switch (activeMenu) {
+      case "card":
+        return <SectionCards />;
       case "home":
         return <HomeContent />;
       case "inbox":
         return <InboxContent />;
-      //   case "calendar":
-      //     return <CalendarContent />;
-      //   case "search":
-      //     return <SearchContent />;
-      //   case "settings":
-      //     return <SettingsContent />;
       default:
         return <HomeContent />;
     }
@@ -45,22 +42,22 @@ export default function DashboardLayout() {
           } as React.CSSProperties
         }
       >
-        <div className="flex min-h-screen">
-          {/* Sidebar on the left */}
-          <AppSidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
-
-          {/* Main content */}
-          <SidebarInset>
-            <div className="flex flex-col w-full h-full">
-              <header className="flex h-12 items-center gap-2 px-4 border-b">
-                <SidebarTrigger />
-                <span className="font-medium">Dashboard</span>
-              </header>
-
-              <div className="flex-1 overflow-auto p-4">{renderContent()}</div>
+        {/* Sidebar on the left */}
+        <AppSidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+        {/* Main content fills remaining width */}
+        <SidebarInset>
+          <header>
+            <SidebarTrigger />
+            <span className="font-medium">Dashboard</span>
+          </header>
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-2">
+              <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 ">
+                {renderContent()}
+              </div>
             </div>
-          </SidebarInset>
-        </div>
+          </div>
+        </SidebarInset>
       </SidebarProvider>
     </QueryClientProvider>
   );
